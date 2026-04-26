@@ -6,7 +6,9 @@ import com.library.model.BorrowRecord;
 import com.library.model.BorrowStatus;
 import com.library.model.Member;
 import com.library.model.MemberStatus;
+import com.library.model.ReturnBookRecord;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -148,6 +150,7 @@ public class SqlServerLibraryService implements LibraryService {
                 }
 
                 updateBookAvailability(connection, record.getBook().getId(), 1);
+                upsertReturnBookRecord(connection, record, returnDate);
                 connection.commit();
 
                 return findBorrowRecordById(borrowRecordId)
@@ -204,6 +207,22 @@ public class SqlServerLibraryService implements LibraryService {
     @Override
     public List<BorrowRecord> getActiveBorrowRecords() {
         return loadBorrowRecords("WHERE br.Status IN ('BORROWED', 'OVERDUE') ORDER BY br.BorrowRecordId");
+    }
+
+    @Override
+    public List<ReturnBookRecord> getReturnBookRecords() {
+        String sql = returnBookSelectSql() + " ORDER BY rb.ReturnBookId";
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            List<ReturnBookRecord> records = new ArrayList<>();
+            while (resultSet.next()) {
+                records.add(mapReturnBookRecord(resultSet));
+            }
+            return records;
+        } catch (SQLException exception) {
+            throw databaseError(exception);
+        }
     }
 
     @Override
@@ -345,6 +364,33 @@ public class SqlServerLibraryService implements LibraryService {
         }
     }
 
+    private void upsertReturnBookRecord(Connection connection, BorrowRecord record, LocalDate returnDate) throws SQLException {
+        String updateSql = "UPDATE dbo.ReturnBooks "
+                + "SET IsReturned = 1, ActualReturnDate = ?, ReturnStatus = 'RETURNED', UpdatedAt = SYSUTCDATETIME(), "
+                + "Notes = 'Returned from console application' "
+                + "WHERE BorrowRecordId = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateSql)) {
+            statement.setDate(1, Date.valueOf(returnDate));
+            statement.setInt(2, record.getId());
+            int updated = statement.executeUpdate();
+            if (updated > 0) {
+                return;
+            }
+        }
+
+        String insertSql = "INSERT INTO dbo.ReturnBooks "
+                + "(BorrowRecordId, BookId, MemberId, IsReturned, ExpectedReturnDate, ActualReturnDate, ReturnStatus, FineAmount, Notes) "
+                + "VALUES (?, ?, ?, 1, ?, ?, 'RETURNED', 0, 'Returned from console application')";
+        try (PreparedStatement statement = connection.prepareStatement(insertSql)) {
+            statement.setInt(1, record.getId());
+            statement.setInt(2, record.getBook().getId());
+            statement.setInt(3, record.getMember().getId());
+            statement.setDate(4, Date.valueOf(record.getDueDate()));
+            statement.setDate(5, Date.valueOf(returnDate));
+            statement.executeUpdate();
+        }
+    }
+
     private String borrowRecordSelectSql() {
         return "SELECT br.BorrowRecordId, br.BorrowDate, br.DueDate, br.ReturnDate, br.Status, "
                 + "b.BookId, b.Title, b.Author, b.Subject, b.TotalQuantity, b.AvailableQuantity, "
@@ -352,6 +398,18 @@ public class SqlServerLibraryService implements LibraryService {
                 + "FROM dbo.BorrowRecords br "
                 + "INNER JOIN dbo.Books b ON b.BookId = br.BookId "
                 + "INNER JOIN dbo.Members m ON m.MemberId = br.MemberId";
+    }
+
+    private String returnBookSelectSql() {
+        return "SELECT rb.ReturnBookId, rb.IsReturned, rb.ExpectedReturnDate, rb.ActualReturnDate, "
+                + "rb.ReturnStatus, rb.FineAmount, rb.Notes, "
+                + "br.BorrowRecordId, br.BorrowDate, br.DueDate, br.ReturnDate, br.Status, "
+                + "b.BookId, b.Title, b.Author, b.Subject, b.TotalQuantity, b.AvailableQuantity, "
+                + "m.MemberId, m.MemberCode, m.FullName, m.Phone, m.Status AS MemberStatus "
+                + "FROM dbo.ReturnBooks rb "
+                + "INNER JOIN dbo.BorrowRecords br ON br.BorrowRecordId = rb.BorrowRecordId "
+                + "INNER JOIN dbo.Books b ON b.BookId = rb.BookId "
+                + "INNER JOIN dbo.Members m ON m.MemberId = rb.MemberId";
     }
 
     private Book mapBook(ResultSet resultSet) throws SQLException {
@@ -401,6 +459,23 @@ public class SqlServerLibraryService implements LibraryService {
                 resultSet.getDate("DueDate").toLocalDate(),
                 returnDate == null ? null : returnDate.toLocalDate(),
                 BorrowStatus.valueOf(resultSet.getString("Status"))
+        );
+    }
+
+    private ReturnBookRecord mapReturnBookRecord(ResultSet resultSet) throws SQLException {
+        BorrowRecord borrowRecord = mapBorrowRecord(resultSet);
+        Date actualReturnDate = resultSet.getDate("ActualReturnDate");
+        BigDecimal fineAmount = resultSet.getBigDecimal("FineAmount");
+
+        return new ReturnBookRecord(
+                resultSet.getInt("ReturnBookId"),
+                borrowRecord,
+                resultSet.getBoolean("IsReturned"),
+                resultSet.getDate("ExpectedReturnDate").toLocalDate(),
+                actualReturnDate == null ? null : actualReturnDate.toLocalDate(),
+                resultSet.getString("ReturnStatus"),
+                fineAmount == null ? BigDecimal.ZERO : fineAmount,
+                resultSet.getString("Notes")
         );
     }
 

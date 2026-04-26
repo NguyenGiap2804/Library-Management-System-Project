@@ -7,6 +7,7 @@ GO
 USE LibraryManagementDemo;
 GO
 
+IF OBJECT_ID('dbo.ReturnBooks', 'U') IS NOT NULL DROP TABLE dbo.ReturnBooks;
 IF OBJECT_ID('dbo.BorrowRecords', 'U') IS NOT NULL DROP TABLE dbo.BorrowRecords;
 IF OBJECT_ID('dbo.Members', 'U') IS NOT NULL DROP TABLE dbo.Members;
 IF OBJECT_ID('dbo.Books', 'U') IS NOT NULL DROP TABLE dbo.Books;
@@ -64,6 +65,27 @@ CREATE TABLE dbo.BorrowRecords (
 );
 GO
 
+CREATE TABLE dbo.ReturnBooks (
+    ReturnBookId INT IDENTITY(1,1) PRIMARY KEY,
+    BorrowRecordId INT NOT NULL UNIQUE,
+    BookId INT NOT NULL,
+    MemberId INT NOT NULL,
+    IsReturned BIT NOT NULL DEFAULT 0,
+    ExpectedReturnDate DATE NOT NULL,
+    ActualReturnDate DATE NULL,
+    ReturnStatus VARCHAR(20) NOT NULL,
+    FineAmount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    Notes NVARCHAR(500) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_ReturnBooks_BorrowRecords FOREIGN KEY (BorrowRecordId) REFERENCES dbo.BorrowRecords(BorrowRecordId),
+    CONSTRAINT FK_ReturnBooks_Books FOREIGN KEY (BookId) REFERENCES dbo.Books(BookId),
+    CONSTRAINT FK_ReturnBooks_Members FOREIGN KEY (MemberId) REFERENCES dbo.Members(MemberId),
+    CONSTRAINT CK_ReturnBooks_Status CHECK (ReturnStatus IN ('PENDING', 'RETURNED', 'OVERDUE')),
+    CONSTRAINT CK_ReturnBooks_ActualDate CHECK (ActualReturnDate IS NULL OR ActualReturnDate >= ExpectedReturnDate OR FineAmount >= 0)
+);
+GO
+
 CREATE INDEX IX_Books_Title ON dbo.Books(Title);
 CREATE INDEX IX_Books_Author ON dbo.Books(Author);
 CREATE INDEX IX_Books_Subject ON dbo.Books(Subject);
@@ -71,6 +93,10 @@ CREATE INDEX IX_Members_FullName ON dbo.Members(FullName);
 CREATE INDEX IX_BorrowRecords_BookId ON dbo.BorrowRecords(BookId);
 CREATE INDEX IX_BorrowRecords_MemberId ON dbo.BorrowRecords(MemberId);
 CREATE INDEX IX_BorrowRecords_Status ON dbo.BorrowRecords(Status);
+CREATE INDEX IX_ReturnBooks_BorrowRecordId ON dbo.ReturnBooks(BorrowRecordId);
+CREATE INDEX IX_ReturnBooks_BookId ON dbo.ReturnBooks(BookId);
+CREATE INDEX IX_ReturnBooks_MemberId ON dbo.ReturnBooks(MemberId);
+CREATE INDEX IX_ReturnBooks_IsReturned ON dbo.ReturnBooks(IsReturned);
 GO
 
 DECLARE @i INT = 1;
@@ -208,7 +234,41 @@ INNER JOIN (
 ) activeBorrow ON activeBorrow.BookId = b.BookId;
 GO
 
+INSERT INTO dbo.ReturnBooks (
+    BorrowRecordId,
+    BookId,
+    MemberId,
+    IsReturned,
+    ExpectedReturnDate,
+    ActualReturnDate,
+    ReturnStatus,
+    FineAmount,
+    Notes
+)
+SELECT TOP (50)
+    br.BorrowRecordId,
+    br.BookId,
+    br.MemberId,
+    CASE WHEN br.Status = 'RETURNED' THEN 1 ELSE 0 END,
+    br.DueDate,
+    br.ReturnDate,
+    CASE
+        WHEN br.Status = 'RETURNED' THEN 'RETURNED'
+        WHEN br.Status = 'OVERDUE' THEN 'OVERDUE'
+        ELSE 'PENDING'
+    END,
+    br.FineAmount,
+    CASE
+        WHEN br.Status = 'RETURNED' THEN 'Returned demo book'
+        WHEN br.Status = 'OVERDUE' THEN 'Book is overdue and has not been returned'
+        ELSE 'Waiting for borrower to return book'
+    END
+FROM dbo.BorrowRecords br
+ORDER BY br.BorrowRecordId;
+GO
+
 SELECT COUNT(*) AS BookCount FROM dbo.Books;
 SELECT COUNT(*) AS MemberCount FROM dbo.Members;
 SELECT COUNT(*) AS BorrowRecordCount FROM dbo.BorrowRecords;
+SELECT COUNT(*) AS ReturnBookCount FROM dbo.ReturnBooks;
 GO

@@ -56,6 +56,9 @@ public class Main {
                     case 8:
                         showBorrowRecords();
                         break;
+                    case 9:
+                        showReturnBookRecords();
+                        break;
                     case 0:
                         running = false;
                         break;
@@ -80,6 +83,7 @@ public class Main {
         System.out.println("6. Borrow book");
         System.out.println("7. Return book");
         System.out.println("8. Show borrow records");
+        System.out.println("9. Show return book records");
         System.out.println("0. Exit");
     }
 
@@ -138,6 +142,10 @@ public class Main {
 
     private void showBorrowRecords() {
         printList("Borrow records", libraryService.getBorrowRecords());
+    }
+
+    private void showReturnBookRecords() {
+        printList("Return book records", libraryService.getReturnBookRecords());
     }
 
     private <T> void printList(String title, List<T> items) {

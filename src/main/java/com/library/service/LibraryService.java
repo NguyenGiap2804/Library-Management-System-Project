@@ -3,6 +3,7 @@ package com.library.service;
 import com.library.model.Book;
 import com.library.model.BorrowRecord;
 import com.library.model.Member;
+import com.library.model.ReturnBookRecord;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +25,8 @@ public interface LibraryService {
     List<BorrowRecord> getBorrowRecords();
 
     List<BorrowRecord> getActiveBorrowRecords();
+
+    List<ReturnBookRecord> getReturnBookRecords();
 
     List<Book> searchBooks(String keyword);
 

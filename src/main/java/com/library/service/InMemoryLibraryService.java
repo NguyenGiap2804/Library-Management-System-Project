@@ -4,7 +4,9 @@ import com.library.model.Book;
 import com.library.model.BorrowRecord;
 import com.library.model.Member;
 import com.library.model.MemberStatus;
+import com.library.model.ReturnBookRecord;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,6 +105,23 @@ public class InMemoryLibraryService implements LibraryService {
     public List<BorrowRecord> getActiveBorrowRecords() {
         return borrowRecords.stream()
                 .filter(BorrowRecord::isActive)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReturnBookRecord> getReturnBookRecords() {
+        return borrowRecords.stream()
+                .limit(50)
+                .map(record -> new ReturnBookRecord(
+                        record.getId(),
+                        record,
+                        !record.isActive(),
+                        record.getDueDate(),
+                        record.getReturnDate(),
+                        record.isActive() ? "PENDING" : "RETURNED",
+                        BigDecimal.ZERO,
+                        "Generated from in-memory demo data"
+                ))
                 .collect(Collectors.toList());
     }
 
