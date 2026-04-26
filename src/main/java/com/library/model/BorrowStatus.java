@@ -1,0 +1,6 @@
+package com.library.model;
+
+public enum BorrowStatus {
+    BORROWED,
+    RETURNED
+}
