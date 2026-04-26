@@ -5,27 +5,6 @@ Du an gom 2 phan rieng:
 - `backend/`: Java Spring Boot REST API, ket noi SQL Server bang JDBC.
 - `frontend/`: React + Vite dashboard, goi API tu backend.
 
-## Cau truc thu muc
-
-```text
-project2/
-  backend/
-    database/
-      library_sqlserver_seed.sql
-    src/main/java/com/library/
-      LibraryApplication.java
-      api/
-      config/
-      model/
-      service/
-    pom.xml
-  frontend/
-    src/
-      main.jsx
-      styles.css
-    package.json
-  README.md
-```
 
 ## Database
 
@@ -72,7 +51,7 @@ backend/src/main/java/com/library/config/DatabaseConfig.java
 Mac dinh dang dung:
 
 ```text
-Server: DESKTOP-T11NI5C\MSSQLSERVER01
+Server: MSSQLSERVER01
 Database: LibraryManagementDemo
 User: sa
 Password: sa123
@@ -180,41 +159,6 @@ Neu muon doi API base URL, tao file `.env` trong `frontend/`:
 VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
-## Cach chay ca he thong
-
-1. Chay SQL script:
-
-```text
-backend/database/library_sqlserver_seed.sql
-```
-
-2. Chay backend:
-
-```powershell
-cd D:\projectbymyself\project2\backend
-mvn spring-boot:run
-```
-
-3. Chay frontend:
-
-```powershell
-cd D:\projectbymyself\project2\frontend
-npm run dev
-```
-
-4. Mo browser:
-
-```text
-http://127.0.0.1:5173
-```
-
-Neu backend ket noi thanh cong, tren frontend se hien:
-
-```text
-Connected to SQL Server through backend API
-```
-
-Neu backend chua chay, frontend se hien du lieu fallback local de giao dien khong bi trong.
 
 ## Chuc nang frontend da noi voi database
 
@@ -227,14 +171,3 @@ Neu backend chua chay, frontend se hien du lieu fallback local de giao dien khon
 - Muon sach goi `POST /api/borrow-records`.
 - Tra sach goi `POST /api/returns`.
 
-## Git ignore
-
-Project khong push cac thu muc build/cache:
-
-```text
-.idea/
-target/
-out/
-frontend/node_modules/
-frontend/dist/
-```
