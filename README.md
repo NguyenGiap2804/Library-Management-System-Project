@@ -1,179 +1,200 @@
-# 📚 Library Management System -Java
+# Library Management System
 
+Ung dung quan ly thu vien bang Java, chay tren console va ket noi SQL Server bang JDBC.
 
-<a href="https://github.com/harismuneer"><img alt="views" title="Github views" src="https://komarev.com/ghpvc/?username=harismuneer&style=flat-square" width="125"/></a>
-[![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](#)
-[![GitHub Forks](https://img.shields.io/github/forks/harismuneer/Library-Management-System-JAVA.svg?style=social&label=Fork&maxAge=2592000)](https://www.github.com/harismuneer/Library-Management-System-JAVA/fork)
-[![GitHub Issues](https://img.shields.io/github/issues/harismuneer/Library-Management-System-JAVA.svg?style=flat&label=Issues&maxAge=2592000)](https://www.github.com/harismuneer/Library-Management-System-JAVA/issues)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&label=Contributions&colorA=red&colorB=black	)](#)
+He thong hien tai ho tro:
 
+- Xem danh sach sach.
+- Tim kiem sach theo ten, tac gia hoac chu de.
+- Them sach moi.
+- Xem danh sach thanh vien.
+- Them thanh vien moi.
+- Muon sach.
+- Tra sach.
+- Xem lich su muon sach.
+- Xem bang ghi nhan tra sach.
 
-A Library Management System made using the concepts of Object Oriented Analysis and Design. Minimal Code is written in the GUI and the entities are decoupled as well. The interface is console based. This project was designed during the course "Object Oriented Analysis and Design CS309".
+## Cong nghe su dung
 
-The **Class Diagram** of the project is also provided along with the **Database Schema** file. The class diagram file can be opened using [Star UML](http://staruml.io/).
+- Java
+- Maven
+- JDBC
+- SQL Server
+- Microsoft SQL Server JDBC Driver
+- IntelliJ IDEA
 
-## Class Diagram
-![class diagram](../master/images/diagram.PNG)
+## Cau truc thu muc
 
-**Note**: After Refactoring, new Class "HoldRequestOperations" is added to the above structure which lies in between the HoldRequest class and Book class.
-This class removes the bidirectional dependency between HoldRequest and Book. More details mentioned [here](https://github.com/OSSpk/Library-Management-System-JAVA/issues/9) 
+```text
+project2/
+  database/
+    library_sqlserver_seed.sql
+    create_sqlserver_login.sql
+  src/main/java/com/library/
+    Main.java
+    config/
+      DatabaseConfig.java
+    data/
+      DemoData.java
+    model/
+      Book.java
+      BorrowRecord.java
+      BorrowStatus.java
+      Member.java
+      MemberStatus.java
+      ReturnBookRecord.java
+    service/
+      LibraryService.java
+      InMemoryLibraryService.java
+      SqlServerLibraryService.java
+  pom.xml
+```
 
-## Interface
-<p align="middle">
-   <img src="../master/images/interface.PNG" width="400"/>
-   <img src="../master/images/interface2.PNG" width="400"/>
-</p>   
+## Database
 
-## Actors:
-The actors include the following: 
-* Librarian
-* Checkout Clerk
-* Borrower
-* Administrator
+Database dang dung:
 
-## Use Cases:
-After determining the actors, the second step in use case analysis is to determine the tasks that each actor will need to do with the system. Each task is called a use case because it represents one particular way the system will be used.
+```text
+LibraryManagementDemo
+```
 
-**In other words, only those use cases are listed that actors will need to do when they are using the system to solve the customer’s problem.** 
+Cac bang chinh:
 
-### Borrower:
-* ❏ Search for items by title.
-* ❏ ... by author.
-* ❏ ... by subject.
-* ❏ Place a book on hold if it is on loan to somebody else.
-* ❏ Check  the  borrower’s  personal  information  and  list  of  books  currently
-borrowed.
+- `Books`: luu thong tin sach.
+- `Members`: luu thong tin thanh vien.
+- `BorrowRecords`: luu lich su muon sach.
+- `ReturnBooks`: ghi nhan sach da tra hay chua.
 
-### Checkout Clerk:
-* ❏ All the Borrower use cases, plus
-* ❏ Check out an item for a borrower.
-* ❏ Check in an item that has been returned.
-* ❏ Renew an item.
-* ❏ Record that a fine has been paid.
-* ❏ Add a new borrower.
-* ❏ Update a borrower’s personal information (address, telephone number etc.).
+File tao schema va seed data:
 
-### Librarian:
-* ❏ All of the Borrower and Checkout Clerk use cases, plus
-* ❏ Add a new item to the collection.
-* ❏ Delete an item from the collection.
-* ❏ Change the information the system has recorded about an item.
+```text
+database/library_sqlserver_seed.sql
+```
 
-### Administrator:
-* ❏ Add Clerk.
-* ❏ Add Librarian.
-* ❏ View Issued Books History.
-* ❏ View All Books in Library.
+File nay se:
 
+- Tao database `LibraryManagementDemo` neu chua co.
+- Xoa va tao lai cac bang demo.
+- Tao 100 sach.
+- Tao 100 thanh vien.
+- Tao 100 ban ghi muon sach.
+- Tao 50 ban ghi tra sach.
 
-## How to Run
-1- Install these:
- * [Java SE Development Kit 8 (JDK 8)](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
- * After installing JDK 8, install [NetBeans IDE](https://netbeans.org/downloads/)
+Luu y: file seed co lenh `DROP TABLE`, nen neu chay lai se reset du lieu demo.
 
-2- Open NetBeans IDE. Click on File -> Open Project and browse to the downloaded folder named "Project" and select it. It will load the NetBeans project.
+## Thong tin ket noi SQL Server
 
-3- Now everything is setup except the Java DB (Derby) Database of NetBeans. So, follow these steps to setup the database:
+Ung dung dang ket noi toi SQL Server bang SQL Authentication:
 
-**Step 1:** In the Netbeans Window, there is a tab named "Services" on the left. Select it. Then right click on JavaDB > Properties and    change database location to "Database" folder downloaded with this repository (its placed besides the "Project" folder).
+```text
+Server: DESKTOP-T11NI5C\MSSQLSERVER01
+Database: LibraryManagementDemo
+User: sa
+Password: sa123
+```
 
-![step1](../master/images/step1.PNG)
-   
-**Step 2:** After that a database named LMS will show up under JavaDB tab. Now Right Click Databases > New Connection and select Java DB Network and click Next. 
+Connection string nam trong file:
 
-![step2](../master/images/step2.PNG)
-   
-**Step 3:** Provide the following database crendentials in the next popup and click Next.
-  ```
-  Host: localhost
-  Port: 1527
-  Database: LMS
-  User Name: haris
-  Password: 123
-  ``` 
-![step3](../master/images/step3.PNG)
+```text
+src/main/java/com/library/config/DatabaseConfig.java
+```
 
-**Step 4:**
-Now just click Next for the rest of the windows. After all this the database connection is made. Make sure that you connect with the database before running the project by right clicking on the connection and selecting connect. Now you are ready to run the project!
+Noi dung ket noi mac dinh:
 
-![final](../master/images/final.png)
+```java
+jdbc:sqlserver://DESKTOP-T11NI5C\\MSSQLSERVER01;
+databaseName=LibraryManagementDemo;
+encrypt=true;
+trustServerCertificate=true;
+```
 
-## Note
-The password for Administrative Functions is *lib*. The admin adds new clerks and librarian, then they both do the rest of the functions.
+Neu may khac co ten SQL Server khac, sua `DEFAULT_URL` trong `DatabaseConfig.java`.
 
-<hr>
+## Cach tao database
 
-## Authors 👋
+Mo SQL Server Management Studio, ket noi vao SQL Server, sau do chay file:
 
-You can get in touch with us on our LinkedIn Profiles:
+```text
+database/library_sqlserver_seed.sql
+```
 
-#### Haris Muneer
+Sau khi chay thanh cong, cuoi file se tra ve so luong du lieu:
 
-[![LinkedIn Link](https://img.shields.io/badge/Connect-harismuneer-blue.svg?logo=linkedin&longCache=true&style=social&label=Follow)](https://www.linkedin.com/in/harismuneer)
+```sql
+SELECT COUNT(*) AS BookCount FROM dbo.Books;
+SELECT COUNT(*) AS MemberCount FROM dbo.Members;
+SELECT COUNT(*) AS BorrowRecordCount FROM dbo.BorrowRecords;
+SELECT COUNT(*) AS ReturnBookCount FROM dbo.ReturnBooks;
+```
 
-You can also follow my GitHub Profile to stay updated about my latest projects: [![GitHub Follow](https://img.shields.io/badge/Connect-harismuneer-blue.svg?logo=Github&longCache=true&style=social&label=Follow)](https://github.com/harismuneer)
+Ket qua mong doi:
 
-#### Maham Amjad
+```text
+BookCount: 100
+MemberCount: 100
+BorrowRecordCount: 100
+ReturnBookCount: 50
+```
 
-[![LinkedIn Link](https://img.shields.io/badge/Connect-maham--amjad-blue.svg?logo=linkedin&longCache=true&style=social&label=Connect)](https://www.linkedin.com/in/maham-amjad-40796b177/)
+## Cach chay tren IntelliJ IDEA
 
-You can also follow my GitHub Profile to stay updated about my latest projects: [![GitHub Follow](https://img.shields.io/badge/Connect-maham--amjad-blue.svg?logo=Github&longCache=true&style=social&label=Follow)](https://github.com/MahamAmjad)
+1. Mo IntelliJ IDEA.
+2. Chon **Open** va mo thu muc:
 
-If you liked the repo then kindly support it by giving it a star ⭐ and share in your circles so more people can benefit from the effort.
+```text
+D:\projectbymyself\project2
+```
 
-## Contributions Welcome
-[![GitHub Issues](https://img.shields.io/github/issues/harismuneer/Library-Management-System-JAVA.svg?style=flat&label=Issues&maxAge=2592000)](https://www.github.com/harismuneer/Library-Management-System-JAVA/issues)
+3. Neu IntelliJ hien thong bao Maven, bam **Load Maven Project**.
+4. Mo file:
 
-If you find any bugs, have suggestions, or face issues:
+```text
+src/main/java/com/library/Main.java
+```
 
-- Open an Issue in the Issues Tab to discuss them.
-- Submit a Pull Request to propose fixes or improvements.
-- Review Pull Requests from other contributors to help maintain the project's quality and progress.
+5. Bam nut Run tai ham:
 
-This project thrives on community collaboration! Members are encouraged to take the initiative, support one another, and actively engage in all aspects of the project. Whether it’s debugging, fixing issues, or brainstorming new ideas, your contributions are what keep this project moving forward.
+```java
+public static void main(String[] args)
+```
 
-With modern AI tools like ChatGPT, solving challenges and contributing effectively is easier than ever. Let’s work together to make this project the best it can be! 🚀
+6. Console se hien menu:
 
-## License
-[![MIT](https://img.shields.io/cocoapods/l/AFNetworking.svg?style=style&label=License&maxAge=2592000)](../master/LICENSE)
+```text
+===== Library Management System =====
+1. Show books
+2. Search books
+3. Add book
+4. Show members
+5. Add member
+6. Borrow book
+7. Return book
+8. Show borrow records
+9. Show return book records
+0. Exit
+```
 
-Copyright (c) 2018-present, harismuneer, MahamAmjad
+## Cach su dung nhanh
 
-<!-- PROFILE_INTRO_START -->
+### Xem sach
 
-<hr>
+Chon:
 
-<h1> <a href="#"><img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" alt="Waving hand" width="28"></a>
-Hey there, I'm <a href="https://www.linkedin.com/in/harismuneer/">Haris Muneer</a> 👨🏻‍💻
-</h1>
+```text
+1
+```
 
+Ung dung se doc du lieu tu bang `Books`.
 
-<a href="https://github.com/harismuneer"><img src="https://img.shields.io/github/stars/harismuneer" alt="Total Github Stars"></a>
-<a href="https://github.com/harismuneer?tab=followers"><img src="https://img.shields.io/github/followers/harismuneer" alt="Total Github Followers"></a>
+### Tim sach
 
-<hr>
+Chon:
 
-- <b>🛠️ Product Builder:</b> Agile Product Manager with 5+ years of hands-on experience delivering SaaS solutions across sales, recruiting, AI, social media, and public sector domains. Background in Computer Science, with a proven track record of scaling products from inception to $XXM+ ARR, launching 3 top-ranking tools on Product Hunt, and developing solutions adopted by 250+ B2B clients in 40+ countries.  
- 
-- <b>🌟 Open Source Advocate:</b> Passionate about making technology accessible, I’ve developed and open-sourced several software projects for web, mobile, desktop, and AI on my <a href="https://github.com/harismuneer">GitHub profile</a>. These projects have been used by thousands of learners worldwide to enhance their skills and knowledge.
+```text
+2
+```
 
-- <b>📫 How to Reach Me:</b> To learn more about my skills and work, visit my <a href="https://www.linkedin.com/in/harismuneer">LinkedIn profile</a>. For collaboration or inquiries, feel free to reach out via <a href="mailto:haris.muneer5@gmail.com">email</a>.
+Nhap keyword, vi du:
 
-<hr>
-
-<h2 align="left">🤝 Follow my journey</h2>
-<p align="left">
-  <a href="https://www.linkedin.com/in/harismuneer"><img title="Follow Haris Muneer on LinkedIn" src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
-  <a href="https://github.com/harismuneer"><img title="Follow Haris Muneer on GitHub" src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
-  <a href="https://www.youtube.com/@haris_muneer?sub_confirmation=1"><img title="Subscribe on YouTube" src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a> 
-  <a href="mailto:haris.muneer5@gmail.com"><img title="Email" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"/></a>
-</p>
-
-
-
-<!-- PROFILE_INTRO_END -->
-
-
-
-
-
+```text
+Java
