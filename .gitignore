@@ -1,4 +1,33 @@
+# ===== IDE =====
 .idea/
+*.iml
+.vscode/
+
+# ===== Java / Maven Build =====
 target/
 out/
 *.class
+*.jar
+*.war
+
+# ===== Spring Boot Config nhạy cảm =====
+application-dev.properties
+application-prod.properties
+application-local.properties
+*.env
+.env
+.env.*
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== Frontend =====
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+
+# ===== OS Files =====
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,80 +1,240 @@
 # Library Management System
 
-Ung dung quan ly thu vien bang Java, chay tren console va ket noi SQL Server bang JDBC.
+Du an gom 2 phan rieng:
 
-He thong hien tai ho tro:
+- `backend/`: Java Spring Boot REST API, ket noi SQL Server bang JDBC.
+- `frontend/`: React + Vite dashboard, goi API tu backend.
 
-- Xem danh sach sach.
-- Tim kiem sach theo ten, tac gia hoac chu de.
-- Them sach moi.
-- Xem danh sach thanh vien.
-- Them thanh vien moi.
-- Muon sach.
-- Tra sach.
-- Xem lich su muon sach.
-- Xem bang ghi nhan tra sach.
+## Cau truc thu muc
 
-## Cong nghe su dung
-
-- Java
-- JDBC
-- SQL Server
-
-
+```text
+project2/
+  backend/
+    database/
+      library_sqlserver_seed.sql
+    src/main/java/com/library/
+      LibraryApplication.java
+      api/
+      config/
+      model/
+      service/
+    pom.xml
+  frontend/
+    src/
+      main.jsx
+      styles.css
+    package.json
+  README.md
+```
 
 ## Database
 
-Database dang dung:
+Database mac dinh:
 
 ```text
 LibraryManagementDemo
 ```
 
-Cac bang chinh:
-
-- `Books`: luu thong tin sach.
-- `Members`: luu thong tin thanh vien.
-- `BorrowRecords`: luu lich su muon sach.
-- `ReturnBooks`: ghi nhan sach da tra hay chua.
-
-File tao schema va seed data:
+File tao schema va du lieu demo:
 
 ```text
-database/library_sqlserver_seed.sql
+backend/database/library_sqlserver_seed.sql
 ```
 
-File nay se:
+File nay tao cac bang:
 
-- Tao database `LibraryManagementDemo` neu chua co.
-- Xoa va tao lai cac bang demo.
-- Tao 100 sach.
-- Tao 100 thanh vien.
-- Tao 100 ban ghi muon sach.
-- Tao 50 ban ghi tra sach.
+- `Books`
+- `Members`
+- `BorrowRecords`
+- `ReturnBooks`
 
-Luu y: file seed co lenh `DROP TABLE`, nen neu chay lai se reset du lieu demo.
+Va seed:
 
-## Thong tin ket noi SQL Server
+- 100 books
+- 100 members
+- 100 borrow records
+- 50 return book records
 
-Ung dung dang ket noi toi SQL Server bang SQL Authentication:
+## Backend
+
+Backend chay tren:
 
 ```text
-Server: MSSQLSERVER01
+http://localhost:8080
+```
+
+Connection SQL Server nam trong:
+
+```text
+backend/src/main/java/com/library/config/DatabaseConfig.java
+```
+
+Mac dinh dang dung:
+
+```text
+Server: DESKTOP-T11NI5C\MSSQLSERVER01
 Database: LibraryManagementDemo
-User: your username
-Password: your password
+User: sa
+Password: sa123
 ```
 
-
-
-Neu may khac co ten SQL Server khac, sua `DEFAULT_URL` trong `DatabaseConfig.java`.
-
-## Cach tao database
-
-Mo SQL Server Management Studio, ket noi vao SQL Server, sau do chay file:
+Neu may khac co server/user/password khac, sua `DatabaseConfig.java` hoac set environment variables:
 
 ```text
-database/library_sqlserver_seed.sql
+LMS_DB_URL
+LMS_DB_USER
+LMS_DB_PASSWORD
 ```
 
+### Chay backend bang IntelliJ
 
+1. Mo project trong IntelliJ.
+2. Mo Maven project trong thu muc `backend/`.
+3. Chay class:
+
+```text
+com.library.LibraryApplication
+```
+
+Hoac trong Maven panel chay:
+
+```text
+spring-boot:run
+```
+
+### Chay backend bang terminal
+
+Neu may da cai Maven:
+
+```powershell
+cd D:\projectbymyself\project2\backend
+mvn spring-boot:run
+```
+
+Neu terminal bao `mvn is not recognized`, dung Maven bundled cua IntelliJ qua script:
+
+```powershell
+cd D:\projectbymyself\project2\backend
+.\run-backend.ps1
+```
+
+Kiem tra API:
+
+```text
+http://localhost:8080/api/health
+```
+
+Ket qua mong doi:
+
+```json
+{"status":"ok"}
+```
+
+## API endpoints
+
+```text
+GET  /api/health
+GET  /api/stats
+GET  /api/books
+POST /api/books
+GET  /api/members
+POST /api/members
+GET  /api/borrow-records
+GET  /api/borrow-records/active
+POST /api/borrow-records
+POST /api/returns
+GET  /api/return-books
+```
+
+## Frontend
+
+Frontend chay tren:
+
+```text
+http://127.0.0.1:5173
+```
+
+Chay:
+
+```powershell
+cd D:\projectbymyself\project2\frontend
+npm install
+npm run dev
+```
+
+Build:
+
+```powershell
+npm run build
+```
+
+Frontend mac dinh goi API:
+
+```text
+http://localhost:8080/api
+```
+
+Neu muon doi API base URL, tao file `.env` trong `frontend/`:
+
+```text
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+## Cach chay ca he thong
+
+1. Chay SQL script:
+
+```text
+backend/database/library_sqlserver_seed.sql
+```
+
+2. Chay backend:
+
+```powershell
+cd D:\projectbymyself\project2\backend
+mvn spring-boot:run
+```
+
+3. Chay frontend:
+
+```powershell
+cd D:\projectbymyself\project2\frontend
+npm run dev
+```
+
+4. Mo browser:
+
+```text
+http://127.0.0.1:5173
+```
+
+Neu backend ket noi thanh cong, tren frontend se hien:
+
+```text
+Connected to SQL Server through backend API
+```
+
+Neu backend chua chay, frontend se hien du lieu fallback local de giao dien khong bi trong.
+
+## Chuc nang frontend da noi voi database
+
+- Dashboard stats doc tu `/api/stats`.
+- Book Management doc tu `/api/books`.
+- Them sach goi `POST /api/books`.
+- Member Management doc tu `/api/members`.
+- Them member goi `POST /api/members`.
+- Circulation doc active loans tu `/api/borrow-records/active`.
+- Muon sach goi `POST /api/borrow-records`.
+- Tra sach goi `POST /api/returns`.
+
+## Git ignore
+
+Project khong push cac thu muc build/cache:
+
+```text
+.idea/
+target/
+out/
+frontend/node_modules/
+frontend/dist/
+```
