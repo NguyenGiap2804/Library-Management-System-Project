@@ -20,6 +20,24 @@ public class BorrowRecord {
         this.status = BorrowStatus.BORROWED;
     }
 
+    public BorrowRecord(
+            int id,
+            Book book,
+            Member member,
+            LocalDate borrowDate,
+            LocalDate dueDate,
+            LocalDate returnDate,
+            BorrowStatus status
+    ) {
+        this.id = id;
+        this.book = book;
+        this.member = member;
+        this.borrowDate = borrowDate;
+        this.dueDate = dueDate;
+        this.returnDate = returnDate;
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }
@@ -49,7 +67,7 @@ public class BorrowRecord {
     }
 
     public boolean isActive() {
-        return status == BorrowStatus.BORROWED;
+        return status == BorrowStatus.BORROWED || status == BorrowStatus.OVERDUE;
     }
 
     public void markReturned(LocalDate returnDate) {

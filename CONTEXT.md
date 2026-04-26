@@ -8,7 +8,7 @@ Du an phu hop de thuc hanh Java Desktop Application voi:
 
 - Java Swing hoac JavaFX de xay dung giao dien.
 - JDBC de ket noi va thao tac voi database.
-- MySQL hoac mot relational database khac de luu tru du lieu.
+- SQLServer hoac mot relational database khac de luu tru du lieu.
 - Mo hinh ung dung co nhieu man hinh, nhieu bang du lieu va nghiep vu ro rang.
 
 ## 2. Main Goals

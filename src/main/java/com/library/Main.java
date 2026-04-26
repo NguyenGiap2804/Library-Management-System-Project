@@ -1,10 +1,10 @@
 package com.library;
 
-import com.library.data.DemoData;
 import com.library.model.Book;
 import com.library.model.BorrowRecord;
 import com.library.model.Member;
 import com.library.service.LibraryService;
+import com.library.service.SqlServerLibraryService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -13,13 +13,19 @@ import java.util.Scanner;
 
 public class Main {
     private final Scanner scanner = new Scanner(System.in);
-    private final LibraryService libraryService = DemoData.createLibraryService();
+    private final LibraryService libraryService = new SqlServerLibraryService();
+
+    // Offline demo option:
+    // If you want to run without SQL Server, replace the line above with:
+    // private final LibraryService libraryService = DemoData.createLibraryService();
 
     public static void main(String[] args) {
         new Main().run();
     }
 
     private void run() {
+        System.out.println("Connected mode: SQL Server database LibraryManagementDemo");
+        System.out.println();
         boolean running = true;
         while (running) {
             printMenu();

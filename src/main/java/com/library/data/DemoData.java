@@ -1,5 +1,6 @@
 package com.library.data;
 
+import com.library.service.InMemoryLibraryService;
 import com.library.service.LibraryService;
 
 import java.time.LocalDate;
@@ -9,7 +10,9 @@ public final class DemoData {
     }
 
     public static LibraryService createLibraryService() {
-        LibraryService service = new LibraryService();
+        // Demo data is kept only for offline testing without SQL Server.
+        // Main.java now uses SqlServerLibraryService by default.
+        InMemoryLibraryService service = new InMemoryLibraryService();
 
         service.addBook("Clean Code", "Robert C. Martin", "Software Engineering", 3);
         service.addBook("Effective Java", "Joshua Bloch", "Java", 2);
