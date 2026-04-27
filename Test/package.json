@@ -1,0 +1,13 @@
+{
+  "name": "library-management-qa-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node automated/run-all.mjs",
+    "test:api": "node automated/api-tests.mjs",
+    "test:ui": "node automated/ui-smoke-tests.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
